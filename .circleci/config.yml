@@ -1,51 +1,25 @@
-version: '2.1'
-orbs:
-  node: circleci/node@5.1.0
-
-defaults: &defaults
-  docker:
-    - image: cimg/python:3.10
-  working_directory: ~/project
-
-prepare_venv: &prepare_venv
-  run:
-    name: Create venv
-    command: |
-      python -m venv venv
-      source venv/bin/activate
-      pip install --upgrade pip
+version: 2.1
 
 jobs:
-  deploy_app_to_railway:
-    <<: *defaults
+  deploy:
+    docker:
+      - image: cimg/python:3.10
     steps:
-      - checkout:
-          path: ~/project/
-      - node/install:
-          node-version: '20.9'
-      - run: node --version 
-      - run: npm i -g @railway/cli
+      - checkout
       - run:
-          name: Deploy to Railway App
+          name: Instalar Railway CLI
           command: |
-            cd bankchurn-api
-            railway up --service=pacific-clarity
-            railway up --detach
-
-
-tags_only: &tags_only
-  filters:
-    branches:
-      ignore: /.*/
-    tags:
-      only: /^.*/
+            curl -fsSL https://railway.app/install.sh | sh
+      - run:
+          name: Autenticar en Railway
+          command: railway login --ci
+      - run:
+          name: Desplegar servicio en Railway
+          command: railway up --service=proactive-serenity
 
 workflows:
-  version: 1
-  deploy_pipeline:
+  version: 2
+  deploy-workflow:
     jobs:
-      - deploy_app_to_railway:
-          filters:
-            branches:
-              only:
-                - main
+      - deploy
+
