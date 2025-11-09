@@ -1,0 +1,35 @@
+version: 2.1
+
+jobs:
+  deploy:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+
+      - run:
+          name: Instalar Node.js y Railway CLI
+          command: |
+            sudo apt-get update -y
+            sudo apt-get install -y curl npm
+            npm install -g @railway/cli
+
+      - run:
+          name: Login Railway (modo CI)
+          command: |
+            railway login --ci
+
+      - run:
+          name: Desplegar a Railway
+          command: |
+            railway up --service=empty-project-production-282d --detach
+
+workflows:
+  deploy_on_main:
+    jobs:
+      - deploy:
+          filters:
+            branches:
+              only:
+                - main
+
