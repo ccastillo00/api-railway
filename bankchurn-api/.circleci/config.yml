@@ -8,16 +8,16 @@ jobs:
       - checkout
       - run:
           name: Instalar Railway CLI
-          command: |
-            npm install -g @railway/cli
+          command: npm install -g @railway/cli
       - run:
-          name: Mostrar versión Railway
+          name: Verificar versión Railway
           command: railway --version
       - run:
           name: Autenticarse en Railway
-          command: echo $RAILWAY_TOKEN | railway login --no-interactive
+          command: |
+            echo "$RAILWAY_TOKEN" | railway login --no-interactive
       - run:
-          name: Desplegar a Railway
+          name: Desplegar aplicación
           command: railway up --service=empty-project-production-282d --detach
 
 workflows:
