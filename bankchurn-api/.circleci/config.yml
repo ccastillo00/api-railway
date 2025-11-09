@@ -3,28 +3,23 @@ version: 2.1
 jobs:
   deploy:
     docker:
-      - image: cimg/base:stable
+      - image: cimg/python:3.10  # Imagen base con Python
     steps:
       - checkout
-
       - run:
-          name: Instalar Node.js y Railway CLI
+          name: Instalar Railway CLI
           command: |
-            sudo apt-get update -y
-            sudo apt-get install -y curl npm
             npm install -g @railway/cli
-
       - run:
-          name: Login Railway (modo CI)
+          name: Login en Railway
           command: |
-            railway login --ci
-
+            railway login --token $RAILWAY_TOKEN
       - run:
           name: Desplegar a Railway
           command: |
             railway up --service=empty-project-production-282d --detach
 
-workflows:
+workflows:  
   deploy_on_main:
     jobs:
       - deploy:
