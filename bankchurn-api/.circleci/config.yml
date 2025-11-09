@@ -3,21 +3,17 @@ version: 2.1
 jobs:
   deploy:
     docker:
-      - image: cimg/node:20.5
+      - image: cimg/python:3.10
     steps:
       - checkout
       - run:
           name: Instalar Railway CLI
           command: npm install -g @railway/cli
       - run:
-          name: Verificar versión Railway
-          command: railway --version
-      - run:
           name: Autenticarse en Railway
-          command: |
-            echo "$RAILWAY_TOKEN" | railway login --no-interactive
+          command: railway login <<< "$RAILWAY_TOKEN"
       - run:
-          name: Desplegar aplicación
+          name: Desplegar a Railway
           command: railway up --service=empty-project-production-282d --detach
 
 workflows:
