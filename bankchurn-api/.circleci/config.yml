@@ -8,11 +8,15 @@ jobs:
       - checkout
       - run:
           name: Instalar Railway CLI
-          command: |
+          - run:
+    name: Autenticar en Railway
+    command: echo $RAILWAY_TOKEN | railway login
             npm install -g @railway/cli
       - run:
           name: Autenticar con Railway
-          command: |
+          - run:
+    name: Autenticar en Railway
+    command: echo $RAILWAY_TOKEN | railway login
             echo $RAILWAY_TOKEN | railway login
       - run:
           name: Desplegar a Railway
