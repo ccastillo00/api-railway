@@ -3,16 +3,15 @@ version: 2.1
 jobs:
   deploy:
     docker:
-      - image: cimg/base:stable
+      - image: cimg/python:3.10
     steps:
       - checkout
       - run:
           name: Instalar Railway CLI
           command: |
-            curl -fsSL https://railway.app/install.sh | bash
-            export PATH="$PATH:$HOME/.railway/bin"
+            npm install -g @railway/cli
       - run:
-          name: Autenticar en Railway
+          name: Autenticar con Railway
           command: |
             echo $RAILWAY_TOKEN | railway login
       - run:
@@ -21,7 +20,7 @@ jobs:
             railway up --service=empty-project-production-282d --detach
 
 workflows:
-  deploy-workflow:
+  deploy_on_main:
     jobs:
       - deploy:
           filters:
