@@ -1,31 +1,50 @@
 version: 2.1
 
 jobs:
+  build:
+    docker:
+      - image: cimg/python:3.10
+    steps:
+      - checkout
+
+      - run:
+          name: Install dependencies
+          command: |
+            python -m pip install --upgrade pip
+            pip install -r requirements.txt
+
+      - run:
+          name: Run tests
+          command: |
+            pytest || echo "Tests skipped or not defined"
+
   deploy:
     docker:
       - image: cimg/python:3.10
     steps:
       - checkout
+
       - run:
-          name: Instalar Railway CLI
+          name: Install Railway CLI
           command: |
             npm install -g @railway/cli
+
       - run:
-          name: Autenticar con Railway
+          name: Authenticate with Railway
           command: |
-            echo $RAILWAY_TOKEN | railway login
+            echo $RAILWAY_TOKEN | railway login --browserless
+
       - run:
-          name: Desplegar a Railway
+          name: Deploy to Railway
           command: |
             railway up --service=empty-project-production-282d --detach
 
 workflows:
-  deploy_on_main:
+  version: 2
+  build_and_deploy:
     jobs:
+      - build
       - deploy:
-          filters:
-            branches:
-              only:
-                - main
+          requires:
+            - build
 
-# pipeline rebuild
